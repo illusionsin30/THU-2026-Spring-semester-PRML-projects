@@ -119,7 +119,7 @@ def eval(model, features, label, threshold=0.5):
     pred_label = (pred_results >= threshold).astype(int)
     results = (pred_label == label)
     acc = np.mean(results)
-    logging.info(f"Accuracy on training dataset: {acc}")
+    logging.info(f"Accuracy on test dataset: {acc}")
 
     return acc
 
@@ -143,6 +143,7 @@ def plot_loss_figure(loss_list, save_path):
 def create_argparser():
     parser = argparse.ArgumentParser()
     parser.add_argument('--file_path', type=str, default='./breast-cancer-wisconsin.txt')
+    parser.add_argument('--train_ratio', type=float, default=0.8)
     parser.add_argument('--learning_rate', type=float, default=0.01)
     parser.add_argument('--epochs', type=int, default=None)
     parser.add_argument('--tol', type=float, default=8)
@@ -157,6 +158,7 @@ def main():
                  \nepochs {args.epochs} tol {args.tol}.")
     logging.info(f"Loading data from {args.file_path}")
     samples_code_number, features, label = dataloader(file_path=args.file_path)
+    num_train_samples = int(args.train_ratio * features.shape[0])
     predict_model = BreastCancerPredictor(features_dim=9, lr=args.learning_rate)
 
     # extract features in different labels or class
@@ -191,12 +193,14 @@ def main():
     # here choose L2 loss function
     logging.info(f"Training model...")
     label = label.reshape(-1, 1)
-    loss_list = train(predict_model, features, label, args.epochs, args.tol)
+    train_features, train_label = features[:num_train_samples, :], label[:num_train_samples, :]
+    test_features, test_label = features[num_train_samples:, :], label[num_train_samples:, :]
+    loss_list = train(predict_model, train_features, train_label, args.epochs, args.tol)
     plot_loss_figure(loss_list, args.save_path)
     fit_best_w = predict_model.w
 
     logging.info(f"Evaluating model...")
-    acc = eval(predict_model, features, label)
+    acc = eval(predict_model, test_features, test_label)
     
     cosine_similarity = np.dot(best_w.T, fit_best_w) / (np.linalg.norm(best_w) * np.linalg.norm(fit_best_w))
     logging.info(f"Theoretical best w*: {best_w}, Theoretical acc: {thm_acc}")
