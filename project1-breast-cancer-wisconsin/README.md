@@ -1,4 +1,7 @@
-# Breast Cancer Wisconsin 代码实现 in Python and Numpy
+# Breast Cancer Wisconsin Implementation in Python and Numpy
+
+## Original Question
+See the raw homework file `homework2.pdf`.
 
 ## How to run
 ```bash

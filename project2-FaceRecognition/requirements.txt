@@ -1,0 +1,6 @@
+numpy
+matplotlib
+argparse
+logging
+scikit-learn
+pillow
