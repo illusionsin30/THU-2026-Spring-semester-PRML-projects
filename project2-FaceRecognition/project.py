@@ -25,8 +25,8 @@ def dataloader(dir_path):
         
         for img_path in imgs_paths:
             img_path = os.path.join(img_dir_path, img_path)
-            img = Image.open(img_path)  # img_size: 48 x 48 x 3 = 6912, so use pixels directly
-            img = np.array(img).flatten() # [1, img_size]
+            img = Image.open(img_path)  # img_size: 48 x 48 x 3 = 6912
+            img = np.array(img).flatten() # [1, img_height * img_weight * num_channels]
             sub_data.append(img)
             sub_label.append(label)
         
